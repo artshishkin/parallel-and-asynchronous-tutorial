@@ -1,12 +1,16 @@
 package net.shyshkin.multithreadingtutorial.service;
 
 import net.shyshkin.multithreadingtutorial.domain.Review;
-import net.shyshkin.multithreadingtutorial.util.CommonUtil;
+
+import static net.shyshkin.multithreadingtutorial.util.CommonUtil.delay;
 
 public class ReviewService {
 
     public Review retrieveReviews(String productId) {
-        CommonUtil.delay(1000);
-        return new Review(200, 4.5);
+        delay(1000);
+        return Review.builder()
+                .noOfReviews(200)
+                .overallRating(4.5)
+                .build();
     }
 }

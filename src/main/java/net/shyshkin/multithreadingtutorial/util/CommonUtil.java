@@ -2,17 +2,17 @@ package net.shyshkin.multithreadingtutorial.util;
 
 import org.apache.commons.lang3.time.StopWatch;
 
-import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 import static java.lang.Thread.sleep;
+import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 
 public class CommonUtil {
 
-    public static StopWatch stopWatch = new StopWatch();
+    public static StopWatch stopWatch = StopWatch.create();
 
-    public static void delay(long delayMilliSeconds)  {
-        try{
+    public static void delay(long delayMilliSeconds) {
+        try {
             sleep(delayMilliSeconds);
-        }catch (Exception e){
+        } catch (Exception e) {
             LoggerUtil.log("Exception is :" + e.getMessage());
         }
 
@@ -23,20 +23,20 @@ public class CommonUtil {
         return s.toUpperCase();
     }
 
-    public static void startTimer(){
+    public static void startTimer() {
         stopWatch.start();
     }
 
-    public static void timeTaken(){
+    public static void timeTaken() {
         stopWatch.stop();
-        log("Total Time Taken : " +stopWatch.getTime());
+        log("Total Time Taken : " + stopWatch.getTime());
     }
 
-    public static void stopWatchReset(){
+    public static void stopWatchReset() {
         stopWatch.reset();
     }
 
-    public static  int noOfCores(){
+    public static int noOfCores() {
         return Runtime.getRuntime().availableProcessors();
     }
 }
