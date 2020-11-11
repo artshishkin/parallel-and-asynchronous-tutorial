@@ -34,6 +34,13 @@ public class DataSet {
 
     }
 
+    public static List<String> indexedNamesList(int size) {
+        return IntStream
+                .rangeClosed(1, size)
+                .mapToObj(i -> "Name" + i)
+                .collect(Collectors.toList());
+    }
+
     public static List<Integer> generateIntegerList(int maxNumber) {
         return IntStream.rangeClosed(1, maxNumber)
                 .boxed().collect(Collectors.toList());
@@ -60,7 +67,6 @@ public class DataSet {
         return IntStream.rangeClosed(1, maxNumber)
                 .boxed().collect(Collectors.toSet());
     }
-
 
 
     public static double generateRandomPrice() {
