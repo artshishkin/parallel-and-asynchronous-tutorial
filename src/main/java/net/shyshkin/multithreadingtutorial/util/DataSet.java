@@ -51,12 +51,10 @@ public class DataSet {
     }
 
     public static ArrayList<Integer> generateArrayList(int maxNumber) {
-        ArrayList<Integer> arrayList = new ArrayList<>();
 
-        IntStream.rangeClosed(1, maxNumber)
+        return IntStream.rangeClosed(1, maxNumber)
                 .boxed()
-                .forEach((arrayList::add));
-        return arrayList;
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static LinkedList<Integer> generateIntegerLinkedList(int maxNumber) {
