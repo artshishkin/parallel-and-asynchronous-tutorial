@@ -6,6 +6,7 @@ import net.shyshkin.multithreadingtutorial.util.LoggerUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ParallelStreamExample {
 
@@ -29,8 +30,18 @@ public class ParallelStreamExample {
         resultList = names
                 .parallelStream()
                 .map(ParallelStreamExample::addNameLengthTransform)
+//                .sequential()
                 .collect(Collectors.toList());
         return resultList;
+    }
+
+    public List<String> stringTransform(List<String> names, boolean parallel) {
+        Stream<String> namesStream = names.stream();
+
+        if (parallel) namesStream = namesStream.parallel();
+
+        return namesStream.map(ParallelStreamExample::addNameLengthTransform)
+                .collect(Collectors.toList());
     }
 
 
