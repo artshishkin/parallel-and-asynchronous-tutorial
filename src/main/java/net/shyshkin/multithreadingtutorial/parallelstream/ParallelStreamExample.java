@@ -44,6 +44,12 @@ public class ParallelStreamExample {
                 .collect(Collectors.toList());
     }
 
+    public List<String> string_toLowerCase(List<String> names) {
+        return names
+                .parallelStream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+    }
 
     private static String addNameLengthTransform(String name) {
         CommonUtil.delay(100);

@@ -53,5 +53,28 @@ class ParallelStreamExampleTest {
         });
     }
 
+    @Test
+    @DisplayName("Parallel conversion to Lower Case must be made in certain timeout")
+    void string_toLowerCase_test() {
+        //given
+        ParallelStreamExample parallelStreamExample = new ParallelStreamExample();
+        List<String> names = DataSet.namesList();
+
+        int coresCount = Runtime.getRuntime().availableProcessors();
+        int size = names.size();
+
+        double durationCoefficient = 1.2;
+        final int ONE_NAME_DELAY_MS = 500;
+        double maxDurationMs = durationCoefficient * ONE_NAME_DELAY_MS * size / coresCount;
+
+        //when - then
+        assertTimeout(Duration.ofMillis((long) maxDurationMs), () -> {
+            List<String> resultList = parallelStreamExample.string_toLowerCase(names);
+            assertNotNull(resultList);
+            assertEquals(size, resultList.size());
+            resultList.forEach(result -> assertEquals(result, result.toLowerCase())); //conversion does not take effect
+        });
+    }
+
 
 }
