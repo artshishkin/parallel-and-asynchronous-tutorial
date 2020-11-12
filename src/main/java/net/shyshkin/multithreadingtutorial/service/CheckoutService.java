@@ -12,6 +12,7 @@ import static net.shyshkin.multithreadingtutorial.domain.checkout.CheckoutStatus
 import static net.shyshkin.multithreadingtutorial.domain.checkout.CheckoutStatus.SUCCESS;
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.startTimer;
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.timeTaken;
+import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 
 @RequiredArgsConstructor
 public class CheckoutService {
@@ -36,10 +37,10 @@ public class CheckoutService {
                     .build();
         }
 
-        double sum = cart.getCartItemList()
-                .stream()
-                .mapToDouble(item -> item.getRate() * item.getQuantity())
-                .sum();
+//        double sum = calculateFinalPrice(cart);
+        double sum = calculateFinalPriceUsingReduce(cart);
+
+        log("Checkout complete and the Final price is: " + sum);
 
         timeTaken();
         return CheckoutResponse.builder()
@@ -47,4 +48,26 @@ public class CheckoutService {
                 .finalRate(sum)
                 .build();
     }
+
+    private double calculateFinalPrice(Cart cart) {
+        return cart.getCartItemList()
+                .stream()
+                .mapToDouble(item -> item.getRate() * item.getQuantity())
+                .sum();
+    }
+
+    private double calculateFinalPriceUsingCollect(Cart cart) {
+        return cart.getCartItemList()
+                .stream()
+                .map(item -> item.getRate() * item.getQuantity())
+                .collect(Collectors.summingDouble(Double::doubleValue));
+    }
+
+    private double calculateFinalPriceUsingReduce(Cart cart) {
+        return cart.getCartItemList()
+                .stream()
+                .map(item -> item.getRate() * item.getQuantity())
+                .reduce(0.0, Double::sum);
+    }
+
 }
