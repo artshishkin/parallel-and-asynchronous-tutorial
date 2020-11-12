@@ -23,7 +23,7 @@ public class CheckoutService {
         startTimer();
 
         List<CartItem> cartItemsExpired = cart.getCartItemList()
-                .stream()
+                .parallelStream()
                 .filter(priceValidatorService::isCartItemInvalid)
                 .peek(item -> item.setExpired(true))
                 .collect(Collectors.toList());

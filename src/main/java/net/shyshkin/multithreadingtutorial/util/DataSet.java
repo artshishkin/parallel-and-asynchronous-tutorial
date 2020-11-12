@@ -17,16 +17,20 @@ public class DataSet {
 
     public static Cart createCart(int noOfItemsInCart) {
 
-        Cart cart = new Cart();
-        List<CartItem> cartItemList = new ArrayList<>();
+        Cart.CartBuilder cartBuilder = Cart.builder();
         IntStream.rangeClosed(1, noOfItemsInCart)
-                .forEach((index) -> {
-                    String cartItem = "CartItem -".concat(index + "");
-                    CartItem cartItem1 = new CartItem(index, cartItem, generateRandomPrice(), index, false);
-                    cartItemList.add(cartItem1);
-                });
-        cart.setCartItemList(cartItemList);
-        return cart;
+                .mapToObj(DataSet::generateStubCartItem)
+                .forEach(cartBuilder::cartItem);
+        return cartBuilder.build();
+    }
+
+    private static CartItem generateStubCartItem(int index) {
+        return CartItem.builder()
+                .itemId(index)
+                .itemName("CartItem -" + index)
+                .rate(generateRandomPrice())
+                .quantity(index)
+                .build();
     }
 
     public static List<String> namesList() {
