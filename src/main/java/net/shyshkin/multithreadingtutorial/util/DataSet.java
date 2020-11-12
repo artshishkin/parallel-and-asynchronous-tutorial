@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.toCollection;
+
 public class DataSet {
 
     public static List<String> lowerCaseAlphabetList = List.of("a", "b", "c", "a", "d", "e", "f", "e", "g", "h", "i");
@@ -54,15 +56,14 @@ public class DataSet {
 
         return IntStream.rangeClosed(1, maxNumber)
                 .boxed()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(toCollection(ArrayList::new));
     }
 
     public static LinkedList<Integer> generateIntegerLinkedList(int maxNumber) {
-        LinkedList<Integer> linkedList = new LinkedList<>();
-        IntStream.rangeClosed(1, maxNumber)
+
+        return IntStream.rangeClosed(1, maxNumber)
                 .boxed()
-                .forEach((linkedList::add));
-        return linkedList;
+                .collect(toCollection(LinkedList::new));
     }
 
     public static Set<Integer> generateIntegerSet(int maxNumber) {
