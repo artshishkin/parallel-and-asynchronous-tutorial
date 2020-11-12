@@ -9,3 +9,5 @@
 #### Section 4: Threads, Future, ForkJoin and its Limitations
 
 #### Section 5: Getting started with Parallel Streams
+
+#### Section 6: Build Retail Checkout Application using Parallel Streams
