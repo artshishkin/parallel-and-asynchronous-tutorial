@@ -76,6 +76,21 @@ class CheckoutServiceTest {
 
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {100})
+    void modifyParallelism(int noOfItemsInCart) {
+        //given
+        Cart cart = DataSet.createCart(noOfItemsInCart);
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "100");
+
+        //when
+        CheckoutResponse checkoutResponse = checkoutService.checkout(cart);
+        System.out.println("parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+
+        //then
+        assertEquals(CheckoutStatus.FAILURE, checkoutResponse.getCheckoutStatus());
+    }
+
     @AfterEach
     void tearDown() {
         stopWatchReset();

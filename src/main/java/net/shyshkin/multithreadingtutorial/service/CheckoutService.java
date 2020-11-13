@@ -37,8 +37,8 @@ public class CheckoutService {
                     .build();
         }
 
-//        double sum = calculateFinalPrice(cart);
-        double sum = calculateFinalPriceUsingReduce(cart);
+        double sum = calculateFinalPrice(cart);
+//        double sum = calculateFinalPriceUsingReduce(cart);
 
         log("Checkout complete and the Final price is: " + sum);
 
