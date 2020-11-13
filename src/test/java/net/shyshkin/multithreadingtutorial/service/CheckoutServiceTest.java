@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.noOfCores;
@@ -62,6 +63,17 @@ class CheckoutServiceTest {
         final int ONE_ITEM_DELAY_MS = 500;
         double durationCoefficient = 1.5;
         return (long) (durationCoefficient * ONE_ITEM_DELAY_MS * (noOfItemsInCart / noOfCores() + 1));
+    }
+
+    @Test
+    void parallelism() {
+        //given
+
+        //when
+        System.out.println("parallelism: " + ForkJoinPool.getCommonPoolParallelism());
+
+        //then
+
     }
 
     @AfterEach
