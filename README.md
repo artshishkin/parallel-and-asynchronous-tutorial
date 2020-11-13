@@ -26,3 +26,9 @@
 -  `-Djava.util.concurrent.ForkJoinPool.common.parallelism=100`
 -  `System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism","100");`
 
+#### Section 9: Parallel Streams - Summary
+
+#### Section 10: CompletableFuture
+
+#### Section 11: Exploring CompletableFuture Functions
+
