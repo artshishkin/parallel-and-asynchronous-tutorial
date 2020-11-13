@@ -51,6 +51,17 @@ class CompletableFutureHelloWorldTest {
         assertEquals("HELLO WORLD!", helloWorld);
     }
 
+    @Test
+    void helloWorld_3AsyncCall() {
+        //when
+        startTimer();
+        String helloWorld = cfhw.helloWorld_3AsyncCall();
+        timeTaken();
+
+        //then
+        assertEquals("HELLO WORLD! Hi! Completable Future!", helloWorld);
+    }
+
     @AfterEach
     void tearDown() {
         stopWatchReset();

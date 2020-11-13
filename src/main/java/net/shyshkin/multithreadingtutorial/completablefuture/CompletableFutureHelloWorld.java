@@ -6,6 +6,7 @@ import net.shyshkin.multithreadingtutorial.util.LoggerUtil;
 
 import java.util.concurrent.CompletableFuture;
 
+import static net.shyshkin.multithreadingtutorial.util.CommonUtil.delay;
 import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 
 @RequiredArgsConstructor
@@ -35,6 +36,21 @@ public class CompletableFutureHelloWorld {
         CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world);
         return hello.thenCombine(world, String::concat)
                 .thenApply(String::toUpperCase)
+                .join();
+    }
+
+    public String helloWorld_3AsyncCall() {
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world);
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture
+                .supplyAsync(() -> {
+                    delay(900);
+                    return " Hi! Completable Future!";
+                });
+        return hello
+                .thenCombine(world, String::concat)
+                .thenApply(String::toUpperCase)
+                .thenCombine(hiCompletableFuture, String::concat)
                 .join();
     }
 
