@@ -6,7 +6,7 @@ import net.shyshkin.multithreadingtutorial.util.LoggerUtil;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.shyshkin.multithreadingtutorial.util.CommonUtil.delay;
+import static net.shyshkin.multithreadingtutorial.util.CommonUtil.*;
 import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 
 @RequiredArgsConstructor
@@ -52,6 +52,33 @@ public class CompletableFutureHelloWorld {
                 .thenApply(String::toUpperCase)
                 .thenCombine(hiCompletableFuture, String::concat)
                 .join();
+    }
+
+    public String helloWorld_4_async_calls() {
+        startTimer();
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(() -> this.helloWorldService.hello());
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(() -> this.helloWorldService.world());
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            delay(1000);
+            return " HI Completable Future!";
+        });
+        // Add the 4th CompletableFuture that returns a String "  Bye!"
+        CompletableFuture<String> bye = CompletableFuture.supplyAsync(() -> {
+            delay(1000);
+            return "  Bye!";
+        });
+
+        String hw = hello
+                .thenCombine(world, String::concat) // (first,second)
+                .thenCombine(hiCompletableFuture, String::concat)
+                // Combine the fourth CompletableFuture
+                .thenCombine(bye, String::concat)
+                .thenApply(String::toUpperCase)
+                .join();
+
+        timeTaken();
+
+        return hw;
     }
 
     public static void main(String[] args) {
