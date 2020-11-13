@@ -24,6 +24,20 @@ public class CompletableFutureHelloWorld {
                 .thenApply(str -> String.format("%d - %s", str.length(), str));
     }
 
+    public String helloWorld_approach1() {
+        String hello = helloWorldService.hello();
+        String world = helloWorldService.world();
+        return hello + " " + world;
+    }
+
+    public String helloWorld_multipleAsyncCall() {
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world);
+        return hello.thenCombine(world, String::concat)
+                .thenApply(String::toUpperCase)
+                .join();
+    }
+
     public static void main(String[] args) {
 
         HelloWorldService helloWorldService = new HelloWorldService();

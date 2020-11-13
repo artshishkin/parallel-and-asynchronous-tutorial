@@ -1,10 +1,12 @@
 package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import net.shyshkin.multithreadingtutorial.service.HelloWorldService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CompletableFuture;
 
+import static net.shyshkin.multithreadingtutorial.util.CommonUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CompletableFutureHelloWorldTest {
@@ -36,5 +38,21 @@ class CompletableFutureHelloWorldTest {
         completableFuture
                 .thenAccept(result -> assertEquals("11 - HELLO WORLD", result))
                 .join();
+    }
+
+    @Test
+    void helloWorld_multipleAsyncCall() {
+        //when
+        startTimer();
+        String helloWorld = cfhw.helloWorld_multipleAsyncCall();
+        timeTaken();
+
+        //then
+        assertEquals("HELLO WORLD!", helloWorld);
+    }
+
+    @AfterEach
+    void tearDown() {
+        stopWatchReset();
     }
 }
