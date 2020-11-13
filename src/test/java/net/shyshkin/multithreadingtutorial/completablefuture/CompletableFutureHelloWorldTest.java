@@ -30,6 +30,23 @@ class CompletableFutureHelloWorldTest {
     }
 
     @Test
+    void helloWorld_thenCompose() {
+        //given
+        startTimer();
+
+        //when
+        CompletableFuture<String> completableFuture = cfhw.helloWorld_thenCompose();
+
+        //then
+        completableFuture
+                .thenAccept(result -> {
+                    assertEquals("HELLO WORLD!", result);
+                })
+                .join();
+        timeTaken();
+    }
+
+    @Test
     void helloWorld_withSize() {
         //when
         CompletableFuture<String> completableFuture = cfhw.helloWorld_withSize();
