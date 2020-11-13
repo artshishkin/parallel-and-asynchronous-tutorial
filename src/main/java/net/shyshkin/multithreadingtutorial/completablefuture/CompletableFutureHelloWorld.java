@@ -1,6 +1,7 @@
 package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import net.shyshkin.multithreadingtutorial.service.HelloWorldService;
+import net.shyshkin.multithreadingtutorial.util.LoggerUtil;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -13,8 +14,10 @@ public class CompletableFutureHelloWorld {
         HelloWorldService helloWorldService = new HelloWorldService();
 
         CompletableFuture<Void> completableFuture = CompletableFuture
-                .supplyAsync(() -> helloWorldService.helloWorld())
-                .thenAccept(result -> log("Result is " + result));
+                .supplyAsync(helloWorldService::helloWorld)
+                .thenApply(String::toUpperCase)
+                .thenApply("Result is "::concat)
+                .thenAccept(LoggerUtil::log);
 
         log("main finished");
 
