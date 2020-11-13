@@ -19,6 +19,11 @@ public class CompletableFutureHelloWorld {
                 .thenApply(String::toUpperCase);
     }
 
+    public CompletableFuture<String> helloWorld_withSize() {
+        return helloWorld()
+                .thenApply(str -> String.format("%d - %s", str.length(), str));
+    }
+
     public static void main(String[] args) {
 
         HelloWorldService helloWorldService = new HelloWorldService();
