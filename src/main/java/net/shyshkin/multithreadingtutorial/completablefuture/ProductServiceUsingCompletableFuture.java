@@ -31,6 +31,16 @@ public class ProductServiceUsingCompletableFuture {
         return product;
     }
 
+    public CompletableFuture<Product> retrieveProductDetailsAsync(String productId) {
+
+        var productInfoCF = CompletableFuture.supplyAsync(() -> productInfoService.retrieveProductInfo(productId));
+        var reviewCF = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId));
+
+        return productInfoCF
+                .thenCombine(reviewCF,
+                        (productInfo, review) -> new Product(productId, productInfo, review));
+    }
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         ProductInfoService productInfoService = new ProductInfoService();
