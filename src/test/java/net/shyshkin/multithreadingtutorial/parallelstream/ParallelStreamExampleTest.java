@@ -21,7 +21,7 @@ class ParallelStreamExampleTest {
         List<String> names = DataSet.indexedNamesList(SIZE);
 
         int coresCount = Runtime.getRuntime().availableProcessors();
-        double maxDurationMs = 1.7 * 100 * SIZE / coresCount;
+        double maxDurationMs = 1.7 * 100 * ((SIZE-1) / coresCount + 1);
 
         //when - then
         assertTimeout(Duration.ofMillis((long) maxDurationMs), () -> {

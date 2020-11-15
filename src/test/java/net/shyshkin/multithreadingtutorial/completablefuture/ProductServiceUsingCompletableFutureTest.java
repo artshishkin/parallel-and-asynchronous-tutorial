@@ -1,6 +1,7 @@
 package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import net.shyshkin.multithreadingtutorial.domain.Product;
+import net.shyshkin.multithreadingtutorial.service.InventoryService;
 import net.shyshkin.multithreadingtutorial.service.ProductInfoService;
 import net.shyshkin.multithreadingtutorial.service.ReviewService;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProductServiceUsingCompletableFutureTest {
 
-    ProductServiceUsingCompletableFuture productService = new ProductServiceUsingCompletableFuture(new ProductInfoService(), new ReviewService());
+    ProductServiceUsingCompletableFuture productService = new ProductServiceUsingCompletableFuture(
+            new ProductInfoService(), new ReviewService(), new InventoryService());
 
     @Test
     void retrieveProductDetails() {
@@ -54,6 +56,36 @@ class ProductServiceUsingCompletableFutureTest {
                                     () -> assertNotNull(product),
                                     () -> assertFalse(product.getProductInfo().getProductOptions().isEmpty()),
                                     () -> assertNotNull(product.getReview())
+                            ))
+                    .join();
+
+            timeTaken();
+        });
+    }
+
+    @Test
+    void retrieveProductDetailsAsyncWithInventory() {
+        //given
+        String productId = "someId";
+        startTimer();
+
+        assertTimeoutPreemptively(Duration.ofMillis(1700), () -> {
+
+            //when
+            CompletableFuture<Product> productCF = productService.retrieveProductDetailsAsyncWithInventory(productId);
+
+            //then
+            productCF
+                    .thenAccept(product ->
+                            assertAll(
+                                    () -> assertNotNull(product),
+                                    () -> assertFalse(product.getProductInfo().getProductOptions().isEmpty()),
+                                    () -> assertNotNull(product.getReview()),
+                                    () -> product.getProductInfo().getProductOptions()
+                                            .forEach(
+                                                    productOption ->
+                                                            assertEquals(2, productOption.getInventory().getCount())
+                                            )
                             ))
                     .join();
 

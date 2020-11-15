@@ -2,6 +2,8 @@ package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import lombok.RequiredArgsConstructor;
 import net.shyshkin.multithreadingtutorial.domain.Product;
+import net.shyshkin.multithreadingtutorial.domain.ProductInfo;
+import net.shyshkin.multithreadingtutorial.service.InventoryService;
 import net.shyshkin.multithreadingtutorial.service.ProductInfoService;
 import net.shyshkin.multithreadingtutorial.service.ReviewService;
 import net.shyshkin.multithreadingtutorial.util.CommonUtil;
@@ -14,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 public class ProductServiceUsingCompletableFuture {
     private final ProductInfoService productInfoService;
     private final ReviewService reviewService;
+    private final InventoryService inventoryService;
 
     public Product retrieveProductDetails(String productId) {
         CommonUtil.stopWatch.start();
@@ -41,11 +44,34 @@ public class ProductServiceUsingCompletableFuture {
                         (productInfo, review) -> new Product(productId, productInfo, review));
     }
 
+    public CompletableFuture<Product> retrieveProductDetailsAsyncWithInventory(String productId) {
+
+        var productInfoCF = CompletableFuture
+                .supplyAsync(() -> productInfoService.retrieveProductInfo(productId))
+                .thenApply(productInfo -> {
+                    updateInventory(productInfo);
+                    return productInfo;
+                });
+        var reviewCF = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId));
+
+        return productInfoCF
+                .thenCombine(reviewCF,
+                        (productInfo, review) -> new Product(productId, productInfo, review));
+    }
+
+    private void updateInventory(ProductInfo productInfo) {
+        productInfo
+                .getProductOptions()
+                .parallelStream()
+                .forEach(option -> option.setInventory(inventoryService.addInventory(option)));
+    }
+
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         ProductInfoService productInfoService = new ProductInfoService();
         ReviewService reviewService = new ReviewService();
-        ProductServiceUsingCompletableFuture productService = new ProductServiceUsingCompletableFuture(productInfoService, reviewService);
+        InventoryService inventoryService = new InventoryService();
+        ProductServiceUsingCompletableFuture productService = new ProductServiceUsingCompletableFuture(productInfoService, reviewService, inventoryService);
         String productId = "ABC123";
         Product product = productService.retrieveProductDetails(productId);
         LoggerUtil.log("Product is " + product);
