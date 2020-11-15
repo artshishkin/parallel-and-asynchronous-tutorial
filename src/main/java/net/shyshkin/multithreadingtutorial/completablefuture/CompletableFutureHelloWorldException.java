@@ -24,9 +24,13 @@ public class CompletableFutureHelloWorldException {
         return hello
                 .handle((res, ex) -> {//`handle` allows catch exception and recover
                     log("Exception is: " + ex.getMessage());
-                    return "<recover>"; //recoverable value
+                    return "<recover hello>"; //recoverable value
                 })
                 .thenCombine(world, String::concat)
+                .handle((res, ex) -> {
+                    log("Exception after world is: " + ex.getMessage());
+                    return "<recover world>";
+                })
                 .thenApply(String::toUpperCase)
                 .thenCombine(hiCompletableFuture, String::concat)
                 .join();

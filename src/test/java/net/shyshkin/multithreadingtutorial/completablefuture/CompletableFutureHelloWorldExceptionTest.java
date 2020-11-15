@@ -22,16 +22,32 @@ class CompletableFutureHelloWorldExceptionTest {
     HelloWorldService helloWorldService = new HelloWorldService();
 
     @Test
-    void helloWorld_3AsyncCall_handle() {
+    void helloWorld_3AsyncCall_handle1() {
         //given
         given(helloWorldService.hello()).willThrow(new RuntimeException("Hello Exception"));
         startTimer();
 
         //when
-        String result = cfhwe.helloWorld_3AsyncCall_handle();
+        String result =  cfhwe.helloWorld_3AsyncCall_handle();
 
         //then
         assertEquals("<RECOVER> WORLD! Hi! Completable Future!", result);
+        timeTaken();
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_handle2() {
+        //given
+        given(helloWorldService.hello()).willThrow(new RuntimeException("Hello Exception"));
+        given(helloWorldService.world()).willThrow(new RuntimeException("World Exception"));
+        startTimer();
+
+        //when
+        String result =  cfhwe.helloWorld_3AsyncCall_handle();
+
+        //then
+        assertEquals("<RECOVER WORLD> Hi! Completable Future!", result);
+        //We lost value from `hello`
         timeTaken();
     }
 
