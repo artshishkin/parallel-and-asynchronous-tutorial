@@ -35,3 +35,5 @@
 #### Section 12: Build ProductService Application using CompletableFuture
 
 #### Section 13: Combining Streams and CompletableFuture
+
+#### Section 14: Exception Handling/Recovery in CompletableFuture
