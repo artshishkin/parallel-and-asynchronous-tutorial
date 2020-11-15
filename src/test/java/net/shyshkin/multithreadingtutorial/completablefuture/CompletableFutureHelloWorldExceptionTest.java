@@ -28,7 +28,7 @@ class CompletableFutureHelloWorldExceptionTest {
         startTimer();
 
         //when
-        String result =  cfhwe.helloWorld_3AsyncCall_handle();
+        String result = cfhwe.helloWorld_3AsyncCall_handle();
 
         //then
         assertEquals("<RECOVER HELLO> WORLD! Hi! Completable Future!", result);
@@ -43,7 +43,7 @@ class CompletableFutureHelloWorldExceptionTest {
         startTimer();
 
         //when
-        String result =  cfhwe.helloWorld_3AsyncCall_handle();
+        String result = cfhwe.helloWorld_3AsyncCall_handle();
 
         //then
         assertEquals("<RECOVER WORLD> Hi! Completable Future!", result);
@@ -58,7 +58,65 @@ class CompletableFutureHelloWorldExceptionTest {
         startTimer();
 
         //when
-        String result =  cfhwe.helloWorld_3AsyncCall_handle();
+        String result = cfhwe.helloWorld_3AsyncCall_handle();
+
+        //then
+        assertEquals("<RECOVER WORLD> Hi! Completable Future!", result);
+        //We lost value from `hello`
+        timeTaken();
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_exceptionally_happyPath() {
+        //given
+        startTimer();
+
+        //when
+        String result = cfhwe.helloWorld_3AsyncCall_exceptionally();
+
+        //then
+        assertEquals("HELLO WORLD! Hi! Completable Future!", result);
+        timeTaken();
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_exceptionally_helloEx() {
+        //given
+        given(helloWorldService.hello()).willThrow(new RuntimeException("Hello Exception"));
+        startTimer();
+
+        //when
+        String result = cfhwe.helloWorld_3AsyncCall_exceptionally();
+
+        //then
+        assertEquals("<RECOVER HELLO> WORLD! Hi! Completable Future!", result);
+        timeTaken();
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_exceptionally_worldEx() {
+        //given
+        given(helloWorldService.world()).willThrow(new RuntimeException("World Exception"));
+        startTimer();
+
+        //when
+        String result = cfhwe.helloWorld_3AsyncCall_exceptionally();
+
+        //then
+        assertEquals("<RECOVER WORLD> Hi! Completable Future!", result);
+        //We lost value from `hello`
+        timeTaken();
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_exceptionally_doubleEx() {
+        //given
+        given(helloWorldService.hello()).willThrow(new RuntimeException("Hello Exception"));
+        given(helloWorldService.world()).willThrow(new RuntimeException("World Exception"));
+        startTimer();
+
+        //when
+        String result = cfhwe.helloWorld_3AsyncCall_exceptionally();
 
         //then
         assertEquals("<RECOVER WORLD> Hi! Completable Future!", result);

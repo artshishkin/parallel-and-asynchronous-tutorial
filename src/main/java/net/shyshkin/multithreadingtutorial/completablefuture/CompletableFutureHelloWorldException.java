@@ -45,4 +45,27 @@ public class CompletableFutureHelloWorldException {
                 .thenCombine(hiCompletableFuture, String::concat)
                 .join();
     }
+
+    public String helloWorld_3AsyncCall_exceptionally() {
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world);
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture
+                .supplyAsync(() -> {
+                    delay(900);
+                    return " Hi! Completable Future!";
+                });
+        return hello
+                .exceptionally( ex -> {//`exceptionally` allows catch exception and recover
+                        log("Exception is: " + ex.getMessage());
+                        return "<recover hello>"; //recoverable value
+                })
+                .thenCombine(world, String::concat)
+                .exceptionally( ex -> {
+                    log("Exception after world is: " + ex.getMessage());
+                    return "<recover world>"; //recoverable value
+                })
+                .thenApply(String::toUpperCase)
+                .thenCombine(hiCompletableFuture, String::concat)
+                .join();
+    }
 }
