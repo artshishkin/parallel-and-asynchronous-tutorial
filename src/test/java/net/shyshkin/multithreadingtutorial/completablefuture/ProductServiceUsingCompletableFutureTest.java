@@ -93,6 +93,36 @@ class ProductServiceUsingCompletableFutureTest {
         });
     }
 
+    @Test
+    void updateInventory_approach2() {
+        //given
+        String productId = "someId";
+        startTimer();
+
+        assertTimeout(Duration.ofMillis(1700), () -> {
+
+            //when
+            CompletableFuture<Product> productCF = productService.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+
+            //then
+            productCF
+                    .thenAccept(product ->
+                            assertAll(
+                                    () -> assertNotNull(product),
+                                    () -> assertFalse(product.getProductInfo().getProductOptions().isEmpty()),
+                                    () -> assertNotNull(product.getReview()),
+                                    () -> product.getProductInfo().getProductOptions()
+                                            .forEach(
+                                                    productOption ->
+                                                            assertEquals(2, productOption.getInventory().getCount())
+                                            )
+                            ))
+                    .join();
+
+            timeTaken();
+        });
+    }
+
     @AfterEach
     void tearDown() {
         stopWatchReset();
