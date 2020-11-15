@@ -102,7 +102,7 @@ class ProductServiceUsingCompletableFutureTest {
         assertTimeout(Duration.ofMillis(1700), () -> {
 
             //when
-            CompletableFuture<Product> productCF = productService.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+            CompletableFuture<Product> productCF = productService.retrieveProductDetailsAsyncWithInventory_approach2Async(productId);
 
             //then
             productCF

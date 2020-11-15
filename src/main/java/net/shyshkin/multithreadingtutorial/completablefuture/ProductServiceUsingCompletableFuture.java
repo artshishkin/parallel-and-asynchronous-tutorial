@@ -64,7 +64,7 @@ public class ProductServiceUsingCompletableFuture {
                         (productInfo, review) -> new Product(productId, productInfo, review));
     }
 
-    public CompletableFuture<Product> retrieveProductDetailsAsyncWithInventory_approach2(String productId) {
+    public CompletableFuture<Product> retrieveProductDetailsAsyncWithInventory_approach2Async(String productId) {
 
         var productInfoCF = CompletableFuture
                 .supplyAsync(() -> productInfoService.retrieveProductInfo(productId))
@@ -82,6 +82,30 @@ public class ProductServiceUsingCompletableFuture {
         return productInfoCF
                 .thenCombine(reviewCF,
                         (productInfo, review) -> new Product(productId, productInfo, review));
+    }
+
+    public Product retrieveProductDetailsAsyncWithInventory_approach2(String productId) {
+
+        var productInfoCF = CompletableFuture
+                .supplyAsync(() -> productInfoService.retrieveProductInfo(productId))
+                .thenApply(productInfo -> {
+                    productInfo.setProductOptions(updateInventory_approach2(productInfo));
+                    return productInfo;
+                });
+        var reviewCF = CompletableFuture
+                .supplyAsync(() -> reviewService.retrieveReviews(productId))
+                .exceptionally(ex -> {
+                    log("Handled Exception in the ReviewService: " + ex.getMessage());
+                    return Review.builder().noOfReviews(0).overallRating(0.0).build();
+                });
+
+        return productInfoCF
+                .thenCombine(reviewCF,
+                        (productInfo, review) -> new Product(productId, productInfo, review))
+                .whenComplete((product, ex) -> {
+                    log("Inside WhenComplete: " + product + "; exception is: " + ex);
+                })
+                .join();
     }
 
     private void updateInventory(ProductInfo productInfo) {

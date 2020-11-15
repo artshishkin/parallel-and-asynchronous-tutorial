@@ -7,6 +7,7 @@ import net.shyshkin.multithreadingtutorial.service.ReviewService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,7 +41,7 @@ class ProductServiceUsingCompletableFutureExceptionTest {
         startTimer();
 
         //when
-        CompletableFuture<Product> productCompletableFuture = psucf.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+        CompletableFuture<Product> productCompletableFuture = psucf.retrieveProductDetailsAsyncWithInventory_approach2Async(productId);
 
         //then
         productCompletableFuture
@@ -67,7 +68,7 @@ class ProductServiceUsingCompletableFutureExceptionTest {
         startTimer();
 
         //when
-        CompletableFuture<Product> productCF = psucf.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+        CompletableFuture<Product> productCF = psucf.retrieveProductDetailsAsyncWithInventory_approach2Async(productId);
 
         //then
         productCF
@@ -77,6 +78,42 @@ class ProductServiceUsingCompletableFutureExceptionTest {
                         () -> assertEquals(0.0, product.getReview().getOverallRating())
                 ))
                 .join();
+        timeTaken();
+    }
+
+    @Test
+    void retrieveProductDetailsAsyncWithInventory_approach2_reviewServiceExSync() {
+        //given
+        String productId = "someId";
+        given(reviewService.retrieveReviews(anyString())).willThrow(new RuntimeException("Review service exception"));
+        startTimer();
+
+        //when
+        Product product = psucf.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+
+        //then
+        assertAll(
+                () -> assertNotNull(product.getReview()),
+                () -> assertEquals(0, product.getReview().getNoOfReviews()),
+                () -> assertEquals(0.0, product.getReview().getOverallRating())
+        );
+        timeTaken();
+    }
+
+    @Test
+    void retrieveProductDetailsAsyncWithInventory_approach2_productInfoServiceEx() {
+        //given
+        String productId = "someId";
+        given(productInfoService.retrieveProductInfo(anyString())).willThrow(new RuntimeException("Product info service exception"));
+        startTimer();
+
+        //when
+        Executable executable = () -> {
+            Product productCF = psucf.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+        };
+
+        //then
+        assertThrows(RuntimeException.class, executable);
         timeTaken();
     }
 
