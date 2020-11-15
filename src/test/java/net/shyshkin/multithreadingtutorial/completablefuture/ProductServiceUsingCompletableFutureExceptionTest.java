@@ -1,10 +1,12 @@
 package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import net.shyshkin.multithreadingtutorial.domain.Product;
+import net.shyshkin.multithreadingtutorial.domain.ProductOption;
 import net.shyshkin.multithreadingtutorial.service.InventoryService;
 import net.shyshkin.multithreadingtutorial.service.ProductInfoService;
 import net.shyshkin.multithreadingtutorial.service.ReviewService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -16,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
@@ -114,6 +117,33 @@ class ProductServiceUsingCompletableFutureExceptionTest {
 
         //then
         assertThrows(RuntimeException.class, executable);
+        timeTaken();
+    }
+
+    @Test
+    @DisplayName("When InventoryService throws exception we must handle it by passing Inventory with 1 element")
+    void retrieveProductDetailsAsyncWithInventory_approach2_InventoryServiceEx() {
+        //given
+        String productId = "someId";
+        given(inventoryService.addInventory(any(ProductOption.class))).willThrow(new RuntimeException("Inventory service exception"));
+        startTimer();
+
+        //when
+        Product product = psucf.retrieveProductDetailsAsyncWithInventory_approach2(productId);
+
+        //then
+        assertAll(
+                () -> assertFalse(product.getProductInfo().getProductOptions().isEmpty()),
+                () -> assertNotNull(product.getReview()),
+                () -> assertTrue(product.getReview().getNoOfReviews() > 0),
+
+                //test goal
+                () -> product.getProductInfo().getProductOptions()
+                        .forEach(
+                                productOption ->
+                                        assertEquals(1, productOption.getInventory().getCount())
+                        )
+        );
         timeTaken();
     }
 

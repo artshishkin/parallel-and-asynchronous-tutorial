@@ -1,10 +1,7 @@
 package net.shyshkin.multithreadingtutorial.completablefuture;
 
 import lombok.RequiredArgsConstructor;
-import net.shyshkin.multithreadingtutorial.domain.Product;
-import net.shyshkin.multithreadingtutorial.domain.ProductInfo;
-import net.shyshkin.multithreadingtutorial.domain.ProductOption;
-import net.shyshkin.multithreadingtutorial.domain.Review;
+import net.shyshkin.multithreadingtutorial.domain.*;
 import net.shyshkin.multithreadingtutorial.service.InventoryService;
 import net.shyshkin.multithreadingtutorial.service.ProductInfoService;
 import net.shyshkin.multithreadingtutorial.service.ReviewService;
@@ -121,6 +118,10 @@ public class ProductServiceUsingCompletableFuture {
                 .stream()
                 .map(productOption ->
                         CompletableFuture.supplyAsync(() -> inventoryService.addInventory(productOption))
+                                .exceptionally(ex -> {
+                                    log("Catching ex from Inventory Service: " + ex.getMessage());
+                                    return Inventory.builder().count(1).build();
+                                })
                                 .thenApply(inventory -> {
                                     productOption.setInventory(inventory);
                                     return productOption;
