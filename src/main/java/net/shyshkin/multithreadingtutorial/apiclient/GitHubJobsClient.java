@@ -45,6 +45,14 @@ public class GitHubJobsClient {
                 .collect(Collectors.toList());
     }
 
+    public List<GitHubPosition> invokeGithubJobsAPI_usingMultiplePageNumbers_parallel(List<Integer> pageNumList, String description) {
+        return pageNumList
+                .parallelStream()
+                .map(pageNum -> invokeGithubJobsAPI_withPageNumber(pageNum, description))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
     public List<GitHubPosition> invokeGithubJobsAPI_usingMultiplePageNumbers_cf(List<Integer> pageNumList, String description) {
         List<CompletableFuture<List<GitHubPosition>>> collect = pageNumList
                 .stream()

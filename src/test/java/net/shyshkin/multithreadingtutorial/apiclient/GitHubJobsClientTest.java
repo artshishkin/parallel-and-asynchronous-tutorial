@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.*;
@@ -29,7 +31,9 @@ class GitHubJobsClientTest {
     void invokeGithubJobsAPI(String testName, BiFunction<List<Integer>, String, List<GitHubPosition>> function) {
         //given
         final String description = "java";
-        List<Integer> pages = List.of(1, 2, 3, 4);
+        List<Integer> pages =
+//                List.of(1, 2, 3, 4);
+                IntStream.rangeClosed(1, 16).boxed().collect(Collectors.toList());
         startTimer();
 
         //when
@@ -50,6 +54,8 @@ class GitHubJobsClientTest {
                 (pages, description) -> gitHubJobsClient.invokeGithubJobsAPI_withPageNumber(pages.get(0), description));
         functionMap.put("using stream()",
                 (pages, description) -> gitHubJobsClient.invokeGithubJobsAPI_usingMultiplePageNumbers(pages, description));
+        functionMap.put("using parallelStream()",
+                (pages, description) -> gitHubJobsClient.invokeGithubJobsAPI_usingMultiplePageNumbers_parallel(pages, description));
         functionMap.put("using completable future",
                 (pages, description) -> gitHubJobsClient.invokeGithubJobsAPI_usingMultiplePageNumbers_cf(pages, description));
         functionMap.put("using completable future and allOf()",
