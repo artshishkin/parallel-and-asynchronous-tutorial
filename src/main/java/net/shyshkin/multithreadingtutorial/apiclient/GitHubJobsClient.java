@@ -6,7 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
 
@@ -32,6 +34,14 @@ public class GitHubJobsClient {
                 .collectList()
                 .block();
         return gitHubPositions;
+    }
+
+    public List<GitHubPosition> invokeGithubJobsAPI_usingMultiplePageNumbers(List<Integer> pageNumList, String description) {
+        return pageNumList
+                .stream()
+                .map(pageNum -> invokeGithubJobsAPI_withPageNumber(pageNum, description))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
 }
