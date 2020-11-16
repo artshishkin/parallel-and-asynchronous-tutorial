@@ -80,6 +80,30 @@ public class CompletableFutureHelloWorld {
                 .join();
     }
 
+    public String helloWorld_3AsyncCall_log_async() {
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world);
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture
+                .supplyAsync(() -> {
+                    delay(900);
+                    return " Hi! Completable Future!";
+                });
+        return hello
+                .thenCombineAsync(world, (h, w) -> {
+                    log("Inside Combine h+w");
+                    return h + w;
+                })
+                .thenApplyAsync(s -> {
+                    log("Inside thenApply toUpperCase");
+                    return s.toUpperCase();
+                })
+                .thenCombineAsync(hiCompletableFuture, (hw, hi) -> {
+                    log("Inside Combine hw+hi");
+                    return hw.concat(hi);
+                })
+                .join();
+    }
+
     public String helloWorld_3AsyncCall_customThreadPool() {
 
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -104,6 +128,33 @@ public class CompletableFutureHelloWorld {
                     log("Inside Combine hw+hi");
                     return hw.concat(hi);
                 })
+                .join();
+    }
+
+    public String helloWorld_3AsyncCall_customThreadPool_async() {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello, executorService);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world, executorService);
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture
+                .supplyAsync(() -> {
+                    delay(900);
+                    return " Hi! Completable Future!";
+                }, executorService);
+        return hello
+                .thenCombineAsync(world, (h, w) -> {
+                    log("Inside Combine h+w");
+                    return h + w;
+                }, executorService)
+                .thenApplyAsync(s -> {
+                    log("Inside thenApply toUpperCase");
+                    return s.toUpperCase();
+                }, executorService)
+                .thenCombineAsync(hiCompletableFuture, (hw, hi) -> {
+                    log("Inside Combine hw+hi");
+                    return hw.concat(hi);
+                }, executorService)
                 .join();
     }
 

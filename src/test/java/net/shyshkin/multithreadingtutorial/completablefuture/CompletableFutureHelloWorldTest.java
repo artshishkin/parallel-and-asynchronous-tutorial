@@ -91,10 +91,32 @@ class CompletableFutureHelloWorldTest {
     }
 
     @Test
+    void helloWorld_3AsyncCall_log_async() {
+        //when
+        startTimer();
+        String helloWorld = cfhw.helloWorld_3AsyncCall_log_async();
+        timeTaken();
+
+        //then
+        assertEquals("HELLO WORLD! Hi! Completable Future!", helloWorld);
+    }
+
+    @Test
     void helloWorld_3AsyncCall_customThreadPool() {
         //when
         startTimer();
         String helloWorld = cfhw.helloWorld_3AsyncCall_customThreadPool();
+        timeTaken();
+
+        //then
+        assertEquals("HELLO WORLD! Hi! Completable Future!", helloWorld);
+    }
+
+    @Test
+    void helloWorld_3AsyncCall_customThreadPool_async() {
+        //when
+        startTimer();
+        String helloWorld = cfhw.helloWorld_3AsyncCall_customThreadPool_async();
         timeTaken();
 
         //then
