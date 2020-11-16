@@ -57,4 +57,19 @@ public class GitHubJobsClient {
                 .collect(Collectors.toList());
     }
 
+    public List<GitHubPosition> invokeGithubJobsAPI_usingMultiplePageNumbers_cf_allOf(List<Integer> pageNumList, String description) {
+        List<CompletableFuture<List<GitHubPosition>>> gitHubPositions = pageNumList
+                .stream()
+                .map(pageNum -> CompletableFuture.supplyAsync(() -> invokeGithubJobsAPI_withPageNumber(pageNum, description)))
+                .collect(Collectors.toList());
+
+        CompletableFuture<Void> cfAllOf = CompletableFuture.allOf(gitHubPositions.toArray(new CompletableFuture[gitHubPositions.size()]));
+
+        return cfAllOf.thenApply(v -> gitHubPositions.stream()
+                .map(CompletableFuture::join)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()))
+                .join();
+    }
+
 }

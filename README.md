@@ -47,3 +47,5 @@
 -  [https://jobs.github.com/api](https://jobs.github.com/api)
 -  Example:
     -  `https://jobs.github.com/positions.json?description=ruby&page=1`
+    
+##### Section 19: Handle Multiple CompletableFutures - anyOf(), allOf()    
