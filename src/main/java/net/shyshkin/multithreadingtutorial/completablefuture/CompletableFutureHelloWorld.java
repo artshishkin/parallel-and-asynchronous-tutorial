@@ -5,6 +5,8 @@ import net.shyshkin.multithreadingtutorial.service.HelloWorldService;
 import net.shyshkin.multithreadingtutorial.util.LoggerUtil;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static net.shyshkin.multithreadingtutorial.util.CommonUtil.*;
 import static net.shyshkin.multithreadingtutorial.util.LoggerUtil.log;
@@ -62,6 +64,33 @@ public class CompletableFutureHelloWorld {
                     delay(900);
                     return " Hi! Completable Future!";
                 });
+        return hello
+                .thenCombine(world, (h, w) -> {
+                    log("Inside Combine h+w");
+                    return h + w;
+                })
+                .thenApply(s -> {
+                    log("Inside thenApply toUpperCase");
+                    return s.toUpperCase();
+                })
+                .thenCombine(hiCompletableFuture, (hw, hi) -> {
+                    log("Inside Combine hw+hi");
+                    return hw.concat(hi);
+                })
+                .join();
+    }
+
+    public String helloWorld_3AsyncCall_customThreadPool() {
+
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(helloWorldService::hello, executorService);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(helloWorldService::world, executorService);
+        CompletableFuture<String> hiCompletableFuture = CompletableFuture
+                .supplyAsync(() -> {
+                    delay(900);
+                    return " Hi! Completable Future!";
+                }, executorService);
         return hello
                 .thenCombine(world, (h, w) -> {
                     log("Inside Combine h+w");
