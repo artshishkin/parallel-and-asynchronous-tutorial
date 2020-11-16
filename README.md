@@ -41,3 +41,9 @@
 ##### Section 16: CompletableFuture & Threadpool
 
 ##### Section 17: Threads and Async Overloaded Methods in CompletableFuture
+
+##### Section 18: Build RestFul API Client using Spring WebClient and CompletableFuture
+
+-  [https://jobs.github.com/api](https://jobs.github.com/api)
+-  Example:
+    -  `https://jobs.github.com/positions.json?description=ruby&page=1`
