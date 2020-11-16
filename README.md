@@ -37,3 +37,5 @@
 #### Section 13: Combining Streams and CompletableFuture
 
 #### Section 14: Exception Handling/Recovery in CompletableFuture
+
+##### Section 16: CompletableFuture & Threadpool
