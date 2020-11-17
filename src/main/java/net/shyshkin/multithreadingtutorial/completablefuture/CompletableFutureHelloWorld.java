@@ -192,6 +192,38 @@ public class CompletableFutureHelloWorld {
                 .thenApply(String::toUpperCase);
     }
 
+    public String anyOf() {
+
+        //db
+        CompletableFuture<String> dbCall = CompletableFuture.supplyAsync(() -> {
+            delay(1000);
+            log("response from db");
+            return "Hello world";
+        });
+
+        //rest
+        CompletableFuture<String> restCall = CompletableFuture.supplyAsync(() -> {
+            delay(900);
+            log("response from rest");
+            return "Hello world";
+        });
+
+
+        //soap
+        CompletableFuture<String> soapCall = CompletableFuture.supplyAsync(() -> {
+            delay(1100);
+            log("response from soap");
+            return "Hello world";
+        });
+
+        CompletableFuture<Object> anyOf = CompletableFuture.anyOf(soapCall, restCall, dbCall);
+
+        return (String) anyOf
+                .thenApply(res -> (res instanceof String) ? res : null)
+                .join();
+    }
+
+
     public static void main(String[] args) {
 
         HelloWorldService helloWorldService = new HelloWorldService();

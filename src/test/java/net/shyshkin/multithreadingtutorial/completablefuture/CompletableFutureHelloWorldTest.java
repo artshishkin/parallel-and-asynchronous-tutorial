@@ -132,6 +132,21 @@ class CompletableFutureHelloWorldTest {
         assertEquals("HELLO WORLD! HI COMPLETABLE FUTURE!  BYE!", helloWorld);
     }
 
+    @Test
+    void anyOf() {
+        //given
+        startTimer();
+
+        //when
+        String helloWorld = cfhw.anyOf();
+
+        //then
+        timeTaken();
+        assertEquals("Hello world", helloWorld);
+
+        delay(500);
+    }
+
     @AfterEach
     void tearDown() {
         stopWatchReset();
